@@ -18,12 +18,11 @@ def hello():
 def getRecipes():
     return recipes.getRecipes()
 
-@app.route('/recipesByIngredients', methods=['POST'])
+@app.route('/recipesByIngredients', methods=['GET'])
 def getRecipesByIngredients():
-    my_ing = request.form['ingredients']
+    my_ing = request.args.get('ingredients')
     my_ing = my_ing.split(",")
-    return Response(recipes.getRecipesByIngredients(my_ing), content_type='application/json')
-
+    return recipes.getRecipesByIngredients(my_ing)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

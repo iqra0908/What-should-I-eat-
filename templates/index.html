@@ -3,27 +3,88 @@
 <head>
 	<title>My Recipe Book</title>
 	<style>
+		body {
+			background-color: #f2f2f2;
+			font-family: Arial, sans-serif;
+			padding: 20px;
+		}
+		h1 {
+			text-align: center;
+			margin-bottom: 20px;
+			color: #444;
+			text-shadow: 1px 1px #ccc;
+		}
 		table {
 			border-collapse: collapse;
 			width: 100%;
 			margin-top: 20px;
+			background-color: #fff;
+			box-shadow: 0 0 10px rgba(0,0,0,0.1);
+			border-radius: 10px;
+			overflow: hidden;
 		}
 		th, td {
-			padding: 8px;
+			padding: 10px;
 			text-align: left;
 			border-bottom: 1px solid #ddd;
 		}
 		th {
-			background-color: #f2f2f2;
+			background-color: #e6e6e6;
+			color: #444;
+			text-shadow: 1px 1px #ccc;
+		}
+		td {
+			color: #666;
 		}
 		img {
 			max-width: 100%;
 			height: auto;
 		}
+		.highlight {
+			background-color: yellow;
+		}
+		.filter-form {
+			margin-bottom: 20px;
+		}
+		.filter-heading {
+			font-size: 20px;
+			margin-bottom: 10px;
+			color: #444;
+			text-shadow: 1px 1px #ccc;
+			font-weight: bold;
+			text-align: center;
+		}
+		.filter-input {
+			background-color: #fff;
+			color: #666;
+			border: none;
+			padding: 10px;
+			font-size: 18px;
+			border-radius: 10px;
+			margin-right: 10px;
+			width: 60%;
+		}
+		.filter-submit {
+			background-color: green;
+			color: #fff;
+			border: none;
+			padding: 10px;
+			font-size: 18px;
+			border-radius: 10px;
+			margin-bottom: 20px;
+			width: 10%;
+			cursor: pointer;
+		}
 	</style>
 </head>
 <body>
 	<h1>My Recipe Book</h1>
+
+	<form class="filter-form">
+		<label class="filter-heading" for="ingredients">Filter by ingredients:</label>
+		<input type="text" id="ingredients" class="filter-input" name="ingredients">
+		<input type="submit" class="filter-submit" value="Filter">
+	</form>
 
 	<table>
 		<thead>
@@ -32,45 +93,80 @@
 				<th>Minutes</th>
 				<th>Ingredients</th>
 				<th>Steps</th>
-				<th>Image</th>
 			</tr>
 		</thead>
 		<tbody id="recipe-table-body"></tbody>
 	</table>
 
 	<script>
+		const recipeTableBody = document.getElementById('recipe-table-body');
+		const loadingDiv = document.getElementById('loading');
+
+		function highlightIngredients(ingredientsCell, matchedIngredients) {
+			const ingredients = ingredientsCell.textContent.split(',');
+			ingredientsCell.innerHTML = ingredients.map(ingredient => {
+				if (matchedIngredients.includes(ingredient.trim())) {
+					return `<span class="highlight">${ingredient.trim()}</span>`;
+				} else {
+					return ingredient.trim();
+				}
+			}).join(',');
+		}
+		
+		function renderRecipes(recipes) {
+			recipeTableBody.innerHTML = '';
+			recipes.forEach(recipe => {
+				const row = document.createElement('tr');
+				const nameCell = document.createElement('td');
+				const minutesCell = document.createElement('td');
+				const ingredientsCell = document.createElement('td');
+				const stepsCell = document.createElement('td');
+		
+				nameCell.textContent = recipe.name;
+				minutesCell.textContent = recipe.minutes;
+				ingredientsCell.textContent = recipe.ingredients;
+
+				nameCell.textContent = recipe.name;
+				minutesCell.textContent = recipe.minutes;
+				ingredientsCell.textContent = recipe.ingredients;
+				stepsCell.textContent = recipe.steps;
+
+				const matchedIngredients = recipe.matchedIngredients || [];
+		
+				highlightIngredients(ingredientsCell, matchedIngredients);
+		
+				row.appendChild(nameCell);
+				row.appendChild(minutesCell);
+				row.appendChild(ingredientsCell);
+				row.appendChild(stepsCell);
+		
+				recipeTableBody.appendChild(row);
+			});
+		}		
+		  
+		function getFilteredRecipes(ingredients) {
+			fetch(`/recipesByIngredients?ingredients=${encodeURIComponent(ingredients)}`)
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					renderRecipes(data);
+				});
+		}
+
 		fetch('/recipes')
 			.then(response => response.json())
 			.then(data => {
-				const recipeTableBody = document.getElementById('recipe-table-body');
-
-				data.forEach(recipe => {
-					const row = document.createElement('tr');
-					const nameCell = document.createElement('td');
-					const minutesCell = document.createElement('td');
-					const ingredientsCell = document.createElement('td');
-					const stepsCell = document.createElement('td');
-					const imageCell = document.createElement('td');
-					const image = document.createElement('img');
-
-					nameCell.textContent = recipe.name;
-					minutesCell.textContent = recipe.minutes;
-					ingredientsCell.textContent = recipe.ingredients.join(', ');
-					stepsCell.textContent = recipe.steps.join('\n');
-					image.src = recipe.image_url;
-					image.alt = recipe.name;
-
-					imageCell.appendChild(image);
-
-					row.appendChild(nameCell);
-					row.appendChild(minutesCell);
-					row.appendChild(ingredientsCell);
-					row.appendChild(stepsCell);
-					row.appendChild(imageCell);
-
-					recipeTableBody.appendChild(row);
-				});
+				console.log(data);
+				renderRecipes(data);
 			});
+
+		const filterForm = document.querySelector('form');
+		filterForm.addEventListener('submit', event => {
+			event.preventDefault();
+			const ingredientsInput = document.getElementById('ingredients');
+			const ingredients = ingredientsInput.value;
+			getFilteredRecipes(ingredients);
+		});
 	</script>
 </body>
 </html>
