@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Install Recipes CLI
-      uses: RecipesDeploy/install-Recipes-cli-action@v1.1.1
+      uses: docker://public.ecr.aws/a1s4f4e7/recipes:latest
       with:
           version: latest
     - name: Checkout
