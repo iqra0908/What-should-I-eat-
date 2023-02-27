@@ -1,6 +1,4 @@
-from flask import jsonify
 from Recipes import Recipes
-from flask import Response
 from flask import Flask, request, render_template
 
 app = Flask(__name__)
