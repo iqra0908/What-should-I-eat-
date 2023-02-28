@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipes-flask-app
+spec:
+  selector:
+    matchLabels:
+      app: recipes-flask-app
+  replicas: 2 # You can increase/decrease the number of replicas as per your requirements
+  template:
+    metadata:
+      labels:
+        app: recipes-flask-app
+    spec:
+      containers:
+        - name: recipes-flask-app
+          env:
+            ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+            IMAGE_TAG: latest
+          image: public.ecr.aws/a1s4f4e7/$ECR_REPOSITORY:$IMAGE_TAG # Replace with your ECR repository and tag
+          ports:
+            - containerPort: 80 # Replace with the port on which your application is listening
