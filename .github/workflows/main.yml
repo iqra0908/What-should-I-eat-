@@ -25,7 +25,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y awscli
-        aws eks update-kubeconfig --name recipes
+        aws eks update-kubeconfig --name recipes-flask-app
 
     - name: Build, tag, and push the image to Amazon ECR
       id: build-image
