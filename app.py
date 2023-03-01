@@ -2,7 +2,7 @@ from Recipes import Recipes
 from flask import Flask, request, render_template
 
 app = Flask(__name__)
-recipes = Recipes('data/RAW_recipes.csv')
+recipes = Recipes('data/recipes.pkl.gz')
 
 @app.route("/")
 def index():
