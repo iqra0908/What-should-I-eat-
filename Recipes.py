@@ -49,7 +49,7 @@ class Recipes:
   
 # create main for this class
 if __name__ == "__main__":
-  recipes = Recipes('data/RAW_recipes.csv')
+  recipes = Recipes('data/recipes-part-0 2.7z')
   #my_ing = ['salt', 'pepper', 'onion', 'bell pepper', 'potatoes','shallots','parsley','tarragon','olive oil', 
   #        'cheese','vinegar']
   my_ing = ['winter squash', 'mixed spice', 'honey', 'butter', 'olive oil', 'salt']
