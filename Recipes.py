@@ -2,13 +2,16 @@ import pandas as pd
 import ast
 import spacy
 import re
+import pickle
+import gzip
 
 nlp = spacy.load('en_core_web_sm')
 
 
 class Recipes:
   def __init__(self, filename):
-    self.df = pd.read_csv(filename)
+    with gzip.open(filename, 'rb') as f:
+      self.df = pickle.load(f)
     self.preprocessData()
     
     
@@ -49,7 +52,7 @@ class Recipes:
   
 # create main for this class
 if __name__ == "__main__":
-  recipes = Recipes('data/recipes-part-0 2.7z')
+  recipes = Recipes('data/recipes.pkl.gz')
   #my_ing = ['salt', 'pepper', 'onion', 'bell pepper', 'potatoes','shallots','parsley','tarragon','olive oil', 
   #        'cheese','vinegar']
   my_ing = ['winter squash', 'mixed spice', 'honey', 'butter', 'olive oil', 'salt']
